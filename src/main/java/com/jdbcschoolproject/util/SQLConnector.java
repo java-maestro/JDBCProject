@@ -20,7 +20,7 @@ public class SQLConnector {
                 con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
 //                System.out.println(con);
-                System.out.println("Connected Successfully");
+//                System.out.println("Connected Successfully");
             }catch(ClassNotFoundException | SQLException exception){
                 System.out.println("exception: " + exception.getMessage());
             }

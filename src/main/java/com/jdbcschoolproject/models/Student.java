@@ -1,11 +1,14 @@
 package com.jdbcschoolproject.models;
 
+import java.util.List;
+
 public class Student {
     private int id;
     private String name;
     private int age;
     private  String email;
     private String address;
+    private List<Teacher> teacherList;
 
     public Student(){
 
@@ -57,6 +60,13 @@ public class Student {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public List<Teacher> getTeacherList() {
+        return teacherList;
+    }
+    public void setTeacherList(List<Teacher> teacherList) {
+        this.teacherList = teacherList;
     }
 
     @Override

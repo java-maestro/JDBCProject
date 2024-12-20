@@ -2,6 +2,7 @@ package com.jdbcschoolproject.daos;
 
 import com.jdbcschoolproject.exceptions.StudentNotFoundException;
 import com.jdbcschoolproject.models.Student;
+import com.jdbcschoolproject.models.Teacher;
 import com.jdbcschoolproject.util.SQLConnector;
 
 import java.sql.Connection;
@@ -145,4 +146,65 @@ public class StudentDaoImpl implements StudentDao {
         }
         return listOfStudents;
     }
+
+    @Override
+    public void assignTeacherToStudent(int studentId, int teacherId) {
+        try (Connection connection = SQLConnector.establishConnection();) {
+            String sql = "insert into student_teacher(teacher_id, student_id) values (?,?)";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, teacherId);
+            ps.setInt(2, studentId);
+            ps.executeUpdate();
+            System.out.println("Assigned a teacher successfully with id " + teacherId+ " to student with id " + studentId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Teacher> getAllAssignedTeachersToStudent(int studentId) {
+        List<Teacher> listOfTeachers = new ArrayList<>();
+        try (Connection connection = SQLConnector.establishConnection();) {
+            String sql = "select * from student_teacher where student_id= ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, studentId);
+           ResultSet rs =  ps.executeQuery();
+           while (rs.next()) {
+               int teacherId = rs.getInt("teacher_id");
+               String sqlTeacher = "select * from teacher where id= ?";
+               PreparedStatement psTeacher = connection.prepareStatement(sqlTeacher);
+               psTeacher.setInt(1, teacherId);
+               ResultSet rsTeacher = psTeacher.executeQuery();
+               while (rsTeacher.next()) {
+                    Teacher teacher = new Teacher();
+                    teacher.setId(rsTeacher.getInt("id"));
+                    teacher.setName(rsTeacher.getString("name"));
+                    teacher.setEmail(rsTeacher.getString("email"));
+                    teacher.setAddress(rsTeacher.getString("address"));
+                    listOfTeachers.add(teacher);
+
+               }
+           }
+           return listOfTeachers;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listOfTeachers;
+    }
+
+
+    @Override
+    public void unAssignTeacherToStudent(int studentId, int teacherId) {
+        try (Connection connection = SQLConnector.establishConnection();) {
+            String sql = "delete from student_teacher where teacher_id = ? and student_id =?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, teacherId);
+            ps.setInt(2, studentId);
+            ps.executeUpdate();
+            System.out.println("unAssigned a teacher successfully with id " + teacherId+ " to student with id " + studentId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
